@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -18,13 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -44,11 +36,11 @@ public class Login extends AppCompatActivity {
         final Button botonLogin = findViewById(R.id.botonLogin);
         final EditText editUsu = findViewById(R.id.loginUsu);
         final EditText editPass = findViewById(R.id.passUsu);
+        final TextView txtRegistrar = findViewById(R.id.txtRegistro);
 
         botonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ctx, Agenda.class);
                 botonLogin.setBackgroundColor(Color.parseColor("#08088A"));
 
                 //Recogemos los datos que nos da el usuario
@@ -64,6 +56,13 @@ public class Login extends AppCompatActivity {
                 }
 
                 new GetUsuarios().execute();
+            }
+        });
+        txtRegistrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ctx,Registrar.class);
+                startActivity(intent);
             }
         });
     }
@@ -89,7 +88,6 @@ public class Login extends AppCompatActivity {
             //Hacemos peticion a la url y recivimos respuesta
             String jsonStr = handler.makeServiceCall(url);
             token = handler.makeServiceCall(url2);
-
 
             if(token != null)
             {
@@ -133,7 +131,6 @@ public class Login extends AppCompatActivity {
             if(tokenValido == -1)
             {
                 Toast.makeText(ctx, "Usuario/contraseña Incorrecto", Toast.LENGTH_SHORT).show();
-
             }
             else{
                 Toast.makeText(ctx, "Token: "+token, Toast.LENGTH_SHORT).show();
