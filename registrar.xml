@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+*** Redimension de imagen fondo al sacar teclado
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/fondologin"
+            android:orientation="vertical">
+            <!-- Logo cabecera -->
+            <ImageView
+                android:id="@+id/imagenLogo"
+                android:layout_width="180dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="48dp"
+                android:src="@drawable/logo" />
+            <!-- logo de letras -->
+            <ImageView
+                android:layout_width="238dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/logoletra" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="7"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:text="Nick:"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/editUsu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
+                    android:textCursorDrawable="@null" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="7"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:text="Contraseña:"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/editPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
+                    android:textCursorDrawable="@null" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="7"
+                    android:paddingLeft="20dp"
+                    android:text="Repite Contraseña:"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/editRepPass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
+                    android:textCursorDrawable="@null" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="7"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:text="Email:"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
+                    android:textCursorDrawable="@null" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="7"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:text="Nombre:"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/editNombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
+                    android:textCursorDrawable="@null" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="7"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:text="Apellido:"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/editApellido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
+                    android:textCursorDrawable="@null" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#f9d7db" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:ems="7"
+                    android:paddingLeft="20dp"
+                    android:text="Fecha Nacimiento:"
+                    android:textAlignment="center"
+                    android:textColor="#fff"
+                    android:textSize="15dp" />
+
+                <EditText
+                    android:id="@+id/editFechNac"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ems="10"
+                    android:inputType="date"
+                    android:maxLines="1"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:padding="8dp"
+                    android:textColor="#fff"
+                    android:textColorHint="#fff"
+                    android:textCursorDrawable="@null" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/botonRegistrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="#001"
+                android:text="Registrarse"
+                android:textColor="#fff" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
