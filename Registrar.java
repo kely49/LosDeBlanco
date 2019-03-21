@@ -12,15 +12,18 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Registrar extends AppCompatActivity {
 
     Context ctx = this;
+    ArrayList<String> listaUsuarios = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +75,28 @@ public class Registrar extends AppCompatActivity {
                 String nombre= editNombre.getText().toString();
                 String apellido= editApellido.getText().toString();
                 String fecha= editFecha.getText().toString();
+                boolean usuarioRepe = false;
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                new GetUsuarios().execute();
+
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                for(int i =0; i < listaUsuarios.size();i++)
+                {
+                    if(listaUsuarios.get(i).equals(nick.trim()))
+                    {
+                        usuarioRepe = true;
+                    }
+                }
 
                 //Comprobar que ambas contraseñas coinciden, que no dejan contraseña en blanco y que
                 //todos los campos quedan rellenos
@@ -90,24 +115,30 @@ public class Registrar extends AppCompatActivity {
                     Toast.makeText(ctx, "Debes Rellenar todos los campos", Toast.LENGTH_SHORT).show();
                 }
                 else
-                {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                {   if(!usuarioRepe)
+                    {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        new RegistrarUsuarios().execute(nick, contrasena, email, nombre, apellido, fecha);
+
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        Toast.makeText(ctx, "Registro Exitoso", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(ctx, Login.class);
+                        startActivity(intent);
                     }
-
-                    new RegistrarUsuarios().execute(nick,contrasena,email,nombre,apellido,fecha);
-
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    else
+                    {
+                        Toast.makeText(ctx, "Usuario ya registrado", Toast.LENGTH_SHORT).show();
                     }
-
-                    Toast.makeText(ctx, "Registro Exitoso", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(ctx,Login.class);
-                    startActivity(intent);
                 }
             }
         });
@@ -132,7 +163,15 @@ public class Registrar extends AppCompatActivity {
             String apellido=arg[4];
             String fecha=arg[5];
 
+            /*//IP CLASE
+            String url = "http://192.168.20.44/api/v1/crearUsuario";*/
+            /*
+            //IP CASA
             String url = "http://192.168.1.109/api/v1/crearUsuario";
+            */
+
+            //IP TRABAJO
+            String url = "http://16.19.142.155/api/v1/crearUsuario";
 
             //Creamos un JSON con los datos que nos pase el usuario
             final JSONObject data = new JSONObject();
@@ -152,7 +191,57 @@ public class Registrar extends AppCompatActivity {
             if(url != null)
             {
                 //Mandamos el JSON a la URL
-                handler.crearUsuarioPOST(url,data.toString());
+                handler.crearPOST(url,data.toString());
+            }
+            else{
+                System.out.println("NO SE HA PODIDO ESTABLECER CONEXION CON LA URL");
+            }
+            return null;
+        }
+    }
+    class GetUsuarios extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            System.out.println("Se esta descargando los USUARIOS del JSON");
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            HttpHandler handler = new HttpHandler();
+            /*
+            //IP CLASE
+            String url = "http://192.168.20.44/api/v1/usuarios";*/
+
+            //IP CASA
+            String url = "http://192.168.1.109/api/v1/usuarios";
+            /*
+            //IP TRABAJO
+            String url = "http://16.19.142.155/api/v1/usuarios";*/
+
+            System.out.println("Accediendo a la url:"+url);
+
+            //Hacemos peticion a la url y recivimos respuesta
+            String jsonStr = handler.makeServiceCall(url);
+
+            if(jsonStr != null)
+            {
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonStr);
+                    JSONArray usuarios = jsonObject.getJSONArray("usuarios");
+
+                    for(int i = 0; i < usuarios.length();i++)
+                    {
+                        JSONObject usuario = usuarios.getJSONObject(i);
+                        String nombre = usuario.getString("nick");
+                        listaUsuarios.add(nombre);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
             else{
                 System.out.println("NO SE HA PODIDO ESTABLECER CONEXION CON LA URL");
