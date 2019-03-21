@@ -1,28 +1,22 @@
 package com.example.hp.proyectoldb;
 
-
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 
 public class Login extends AppCompatActivity {
-    ArrayList<String> listaUsuarios = new ArrayList<>();
 
     final Context ctx = this;
     String usuario;
@@ -37,6 +31,11 @@ public class Login extends AppCompatActivity {
         final EditText editUsu = findViewById(R.id.loginUsu);
         final EditText editPass = findViewById(R.id.passUsu);
         final TextView txtRegistrar = findViewById(R.id.txtRegistro);
+        final CheckBox cajaRecordar = findViewById(R.id.recordarLogin);
+        final SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+
+        //Si hay un nick en preferencias, lo cargamos
+        editUsu.setText(prefs.getString("nick",""));
 
         botonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +45,14 @@ public class Login extends AppCompatActivity {
                 //Recogemos los datos que nos da el usuario
                 usuario = editUsu.getText().toString();
                 contraseña = editPass.getText().toString();
+
+                //Comprobamos que la checkbox esté marcada para guardar el usuario en preferencias
+                if(cajaRecordar.isChecked())
+                {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("nick", usuario);
+                    editor.commit();
+                }
 
                 //Evitamos que se ejecute AsynTask para que le de tiempo a recoger los datos del usuario
                 //Antes de que se ejecute AsyncTask
@@ -81,35 +88,19 @@ public class Login extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... arg0) {
             HttpHandler handler = new HttpHandler();
-            String url = "http://192.168.1.109/api/v1/usuarios";
-            String url2 = "http://192.168.1.109/api/v1/login/"+usuario+"/"+contraseña;
-            System.out.println("Accediendo a la url:"+url2);
+            /*
+            //IP CLASE
+            String url2 = "http://192.168.20.44/api/v1/login/"+usuario+"/"+contraseña;*/
 
-            //Hacemos peticion a la url y recivimos respuesta
-            String jsonStr = handler.makeServiceCall(url);
+            /*//IP CASA
+            String url2 = "http://192.168.1.109/api/v1/login/"+usuario+"/"+contraseña;
+            */
+            //IP TRABAJO
+            String url2 = "http://16.19.142.155/api/v1/login/"+usuario+"/"+contraseña;
+
+            //Guardamos el valor del token
             token = handler.makeServiceCall(url2);
 
-            if(token != null)
-            {
-                try {
-                    JSONObject jsonObject = new JSONObject(jsonStr);
-                    JSONArray usuarios = jsonObject.getJSONArray("usuarios");
-
-                    for(int i = 0; i < usuarios.length();i++)
-                    {
-                        JSONObject usuario = usuarios.getJSONObject(i);
-                        String nombre = usuario.getString("nick");
-                        System.out.println(nombre);
-                        listaUsuarios.add(nombre);
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            else{
-                System.out.println("NO SE HA PODIDO ESTABLECER CONEXION CON LA URL");
-            }
             return null;
         }
 
@@ -133,8 +124,9 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(ctx, "Usuario/contraseña Incorrecto", Toast.LENGTH_SHORT).show();
             }
             else{
-                Toast.makeText(ctx, "Token: "+token, Toast.LENGTH_SHORT).show();
-                intent.putExtra("token",token);
+                //Se lo pasamos a la siguiente actividad
+                intent.putExtra("token",tokenValido);
+                intent.putExtra("nick",usuario);
                 startActivity(intent);
             }
 
