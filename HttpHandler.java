@@ -37,7 +37,7 @@ public class HttpHandler {
         return response;
     }
 
-    public void crearUsuarioPOST(String reqUrl,String json){
+    public void crearPOST(String reqUrl,String json){
         try {
             URL url = new URL(reqUrl);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -53,7 +53,7 @@ public class HttpHandler {
             //Limpiamos
             os.flush();
 
-            //do somehting with response
+            //Escribimos la respuesta
             InputStream is = conn.getInputStream();
 
             is.close();
@@ -66,6 +66,7 @@ public class HttpHandler {
             e.printStackTrace();
         }
     }
+
     private String convertStreamToString(InputStream is){
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
