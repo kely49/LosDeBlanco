@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/restofondos"
+    tools:context="com.example.hp.proyectoldb.Agenda">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_agenda" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!--Crear aqui una lista-->
+        <TextView
+            android:layout_marginTop="56dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Agenda"
+            android:gravity="center_horizontal"
+            android:background="#d6d6c2"
+            android:textStyle="bold"
+            android:textSize="19dp" />
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:background="#fff">
+
+        </ListView>
+
+        <Button
+            android:id="@+id/botonAñadirEvent"
+            style="@android:style/Widget.Material.Light.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="270dp"
+            android:layout_marginTop="20dp"
+            android:text="Añadir \n evento" />
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>
