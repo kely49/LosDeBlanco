@@ -13,15 +13,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
-class CrearEdicion extends AppCompatActivity {
+public class CrearEdicion extends AppCompatActivity {
     Context ctx = this;
     ArrayList<String> listaEventos = new ArrayList<>();
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,10 @@ class CrearEdicion extends AppCompatActivity {
         final EditText editLocalidad = findViewById(R.id.localidadCrearEdicion);
         Button botonAnadirEvento = findViewById(R.id.botonCrearEdicion);
 
+        //Cargamos todos los Extra
         Bundle bundle = getIntent().getExtras();
         final int token = bundle.getInt("token");
+        final String nick = bundle.getString("nick");
 
         final Calendar myCalendar = Calendar.getInstance();
 
@@ -73,13 +75,6 @@ class CrearEdicion extends AppCompatActivity {
                 String localidad = editLocalidad.getText().toString();
                 String fechaEvento= editFecha.getText().toString();
 
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                new GetEventos().execute();
                 //Hacemos comprobaciones de que no nos meta nada en blanco a la base de datos
                 if(editEdicion.getText().toString().equals(""))
                 {
@@ -99,10 +94,20 @@ class CrearEdicion extends AppCompatActivity {
                 }
                 else{
                     Intent intent = new Intent(ctx,Agenda.class);
-                    //Volvemos a la agenda pasandole el Token
+                    //Volvemos a la agenda pasandole el Token y el nick, para no perderlo de
+                    //el menu lateral al volver
                     intent.putExtra("token",token);
-                    new RegistrarEventos().execute(nombreEvento,provincia,localidad,fechaEvento);
+                    intent.putExtra("nick",nick);
+                    try {
+                        new RegistrarEventos().execute(nombreEvento,provincia,localidad,fechaEvento).get();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                     startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -124,15 +129,17 @@ class CrearEdicion extends AppCompatActivity {
             String localidad=arg[2];
             String fechaEvento=arg[3];
 
-            /*//IP CLASE
-            String url = "http://192.168.20.44/api/v1/crearUsuario";*/
-            /*
+            //IP CLASE
+            //String url = "http://192.168.20.154/api/v1/crearEvento";
+
             //IP CASA
-            String url = "http://192.168.1.109/api/v1/crearUsuario";
-            */
+            //String url = "http://192.168.1.109/api/v1/crearEvento";
 
             //IP TRABAJO
             String url = "http://16.19.142.155/api/v1/crearEvento";
+
+            //HOSTING
+            //String url = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/crearEvento";
 
             //Creamos un JSON con los datos que nos pase el usuario
             final JSONObject data = new JSONObject();
@@ -152,57 +159,6 @@ class CrearEdicion extends AppCompatActivity {
             {
                 //Mandamos el JSON a la URL
                 handler.crearPOST(url,data.toString());
-            }
-            else{
-                System.out.println("NO SE HA PODIDO ESTABLECER CONEXION CON LA URL");
-            }
-            return null;
-        }
-    }
-    class GetEventos extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            System.out.println("Se esta descargando los USUARIOS del JSON");
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            HttpHandler handler = new HttpHandler();
-            /*
-            //IP CLASE
-            String url = "http://192.168.20.44/api/v1/eventos";*/
-            /*
-            //IP CASA
-            String url = "http://192.168.1.109/api/v1/eventos";
-            */
-
-            //IP TRABAJO
-            String url = "http://16.19.142.155/api/v1/eventos";
-
-            System.out.println("Accediendo a la url:"+url);
-
-            //Hacemos peticion a la url y recivimos respuesta
-            String jsonStr = handler.makeServiceCall(url);
-
-            if(jsonStr != null)
-            {
-                try {
-                    JSONObject jsonObject = new JSONObject(jsonStr);
-                    JSONArray usuarios = jsonObject.getJSONArray("eventos");
-
-                    for(int i = 0; i < usuarios.length();i++)
-                    {
-                        JSONObject usuario = usuarios.getJSONObject(i);
-                        String nombre = usuario.getString("nick");
-                        listaEventos.add(nombre);
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
             }
             else{
                 System.out.println("NO SE HA PODIDO ESTABLECER CONEXION CON LA URL");
