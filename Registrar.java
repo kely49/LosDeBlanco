@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
 
 public class Registrar extends AppCompatActivity {
 
@@ -78,18 +79,13 @@ public class Registrar extends AppCompatActivity {
                 boolean usuarioRepe = false;
 
                 try {
-                    Thread.sleep(50);
+                    new GetUsuarios().execute().get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                new GetUsuarios().execute();
-
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 for(int i =0; i < listaUsuarios.size();i++)
                 {
                     if(listaUsuarios.get(i).equals(nick.trim()))
@@ -118,15 +114,9 @@ public class Registrar extends AppCompatActivity {
                 {   if(!usuarioRepe)
                     {
                         try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
+                            new RegistrarUsuarios().execute(nick, contrasena, email, nombre, apellido, fecha).get();
+                        } catch (ExecutionException e) {
                             e.printStackTrace();
-                        }
-
-                        new RegistrarUsuarios().execute(nick, contrasena, email, nombre, apellido, fecha);
-
-                        try {
-                            Thread.sleep(50);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -163,15 +153,17 @@ public class Registrar extends AppCompatActivity {
             String apellido=arg[4];
             String fecha=arg[5];
 
-            /*//IP CLASE
-            String url = "http://192.168.20.44/api/v1/crearUsuario";*/
-            /*
+            //IP CLASE
+            //String url = "http://192.168.20.154/api/v1/crearUsuario";
+
             //IP CASA
-            String url = "http://192.168.1.109/api/v1/crearUsuario";
-            */
+            //String url = "http://192.168.1.109/api/v1/crearUsuario";
 
             //IP TRABAJO
             String url = "http://16.19.142.155/api/v1/crearUsuario";
+
+            //HOSTING
+            //String url = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/crearUsuario";
 
             //Creamos un JSON con los datos que nos pase el usuario
             final JSONObject data = new JSONObject();
@@ -182,6 +174,7 @@ public class Registrar extends AppCompatActivity {
                 data.put("nombreUsu",nombre);
                 data.put("apellidoUsu",apellido);
                 data.put("fechaNac",fecha);
+                data.put("imagenPerfil","");
                 System.out.println("JSON: "+data.toString());
 
             } catch (JSONException e) {
@@ -211,17 +204,18 @@ public class Registrar extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... arg0) {
             HttpHandler handler = new HttpHandler();
-            /*
+
             //IP CLASE
-            String url = "http://192.168.20.44/api/v1/usuarios";*/
+            //String url = "http://192.168.20.154/api/v1/usuarios";
 
             //IP CASA
-            String url = "http://192.168.1.109/api/v1/usuarios";
-            /*
-            //IP TRABAJO
-            String url = "http://16.19.142.155/api/v1/usuarios";*/
+            //String url = "http://192.168.1.109/api/v1/usuarios";
 
-            System.out.println("Accediendo a la url:"+url);
+            //IP TRABAJO
+            String url = "http://16.19.142.155/api/v1/usuarios";
+
+            //HOSTING
+            //String url = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/usuarios";
 
             //Hacemos peticion a la url y recivimos respuesta
             String jsonStr = handler.makeServiceCall(url);
