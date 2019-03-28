@@ -15,12 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.concurrent.ExecutionException;
 
 public class Login extends AppCompatActivity {
 
     final Context ctx = this;
     String usuario;
-    String contraseña;
+    String contraseña="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +55,15 @@ public class Login extends AppCompatActivity {
                     editor.commit();
                 }
 
-                //Evitamos que se ejecute AsynTask para que le de tiempo a recoger los datos del usuario
-                //Antes de que se ejecute AsyncTask
+                //El Thread principal espera a que el AsyncTask termine
                 try {
-                    Thread.sleep(50);
+                    new GetUsuarios().execute().get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                new GetUsuarios().execute();
             }
         });
         txtRegistrar.setOnClickListener(new View.OnClickListener() {
@@ -88,16 +89,18 @@ public class Login extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... arg0) {
             HttpHandler handler = new HttpHandler();
-            /*
-            //IP CLASE
-            String url2 = "http://192.168.20.44/api/v1/login/"+usuario+"/"+contraseña;*/
 
-            /*//IP CASA
-            String url2 = "http://192.168.1.109/api/v1/login/"+usuario+"/"+contraseña;
-            */
+            //IP CLASE
+            //String url2 = "http://192.168.20.154/api/v1/login/"+usuario+"/"+contraseña;
+
+            //IP CASA
+            //String url2 = "http://192.168.1.109/api/v1/login/"+usuario+"/"+contraseña;
+
             //IP TRABAJO
             String url2 = "http://16.19.142.155/api/v1/login/"+usuario+"/"+contraseña;
 
+            //HOSTING
+            //ring url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/login/"+usuario+"/"+contraseña;
             //Guardamos el valor del token
             token = handler.makeServiceCall(url2);
 
@@ -128,6 +131,8 @@ public class Login extends AppCompatActivity {
                 intent.putExtra("token",tokenValido);
                 intent.putExtra("nick",usuario);
                 startActivity(intent);
+                contraseña="";
+
             }
 
         }
