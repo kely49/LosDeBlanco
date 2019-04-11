@@ -39,12 +39,26 @@
         android:gravity="center"
         android:layout_marginTop="20dp">
 
-        <Button
-            android:layout_marginBottom="130dp"
-            android:id="@+id/botonCrearEquipo"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Crear equipo" />
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_marginBottom="130dp"
+                android:id="@+id/botonCrearEquipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crear equipo" />
+
+            <Button
+                android:layout_marginBottom="130dp"
+                android:id="@+id/botonUnirseEquipo"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unirse a equipo" />
+        </LinearLayout>
         <Button
             android:id="@+id/botonMisEquipos"
             android:layout_marginTop="140dp"
