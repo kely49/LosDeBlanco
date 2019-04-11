@@ -20,6 +20,7 @@ public class GestionEquipos extends AppCompatActivity {
 
         Button botonCrearEquipo = findViewById(R.id.botonCrearEquipo);
         Button botonMisEquipos = findViewById(R.id.botonMisEquipos);
+        Button botonUnirseEquipos = findViewById(R.id.botonUnirseEquipo);
 
         botonCrearEquipo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,9 +35,22 @@ public class GestionEquipos extends AppCompatActivity {
         botonMisEquipos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(ctx,MisEquipos.class);
+                intent.putExtra("token",token);
+                intent.putExtra("nick",nick);
+                startActivity(intent);
             }
         });
 
-        }
+        botonUnirseEquipos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ctx,UnirseEquipo.class);
+                intent.putExtra("token",token);
+                intent.putExtra("nick",nick);
+                startActivity(intent);
+            }
+        });
+
     }
+}
