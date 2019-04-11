@@ -1,11 +1,13 @@
 package com.example.hp.proyectoldb;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -20,8 +22,8 @@ import java.util.concurrent.ExecutionException;
 public class Login extends AppCompatActivity {
 
     final Context ctx = this;
-    String usuario;
-    String contraseña="";
+    String usuario, nickRecu, contraseña, emailRecu, passBD;
+    boolean coinciden;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class Login extends AppCompatActivity {
         final EditText editPass = findViewById(R.id.passUsu);
         final TextView txtRegistrar = findViewById(R.id.txtRegistro);
         final CheckBox cajaRecordar = findViewById(R.id.recordarLogin);
+        final TextView txtRecuperarPass = findViewById(R.id.recuperarPassword);
         final SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
 
         //Si hay un nick en preferencias, lo cargamos
@@ -73,8 +76,160 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        txtRecuperarPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builderAlerta = new AlertDialog.Builder(ctx);
+                builderAlerta.setCancelable(true);
+                builderAlerta.setTitle("Recuperacion de contraseña");
+                builderAlerta.setMessage("¿Cual es tu email?");
+                final EditText editEmail = new EditText(ctx);
+                builderAlerta.setView(editEmail);
+                builderAlerta.setPositiveButton("Aceptar",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                emailRecu = editEmail.getText().toString();
+
+                                AlertDialog.Builder builderAlerta = new AlertDialog.Builder(ctx);
+                                builderAlerta.setCancelable(true);
+                                builderAlerta.setTitle("Recuperacion de contraseña");
+                                builderAlerta.setMessage("¿Cual es tu nick?");
+                                final EditText editNick = new EditText(ctx);
+                                builderAlerta.setView(editNick);
+                                builderAlerta.setPositiveButton("Aceptar",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                nickRecu = editNick.getText().toString();
+
+                                                try {
+                                                    new RecuperarContrasena().execute(nickRecu,emailRecu).get();
+                                                } catch (ExecutionException e) {
+                                                    e.printStackTrace();
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                if(coinciden)
+                                                {
+                                                    try {
+                                                        new EnviarMail().execute(emailRecu,passBD).get();
+                                                    } catch (ExecutionException e) {
+                                                        e.printStackTrace();
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    Toast.makeText(Login.this, "Email enviado, revisa la badeja de entrada y la de SPAM!!", Toast.LENGTH_LONG).show();
+                                                }
+                                                else if(!coinciden)
+                                                {
+                                                    Toast.makeText(Login.this, "El email o el nick es incorrecto", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                builderAlerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+
+                                AlertDialog dialogAlerta = builderAlerta.create();
+                                dialogAlerta.show();
+                            }
+                        });
+                builderAlerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
+                AlertDialog dialogAlerta = builderAlerta.create();
+                dialogAlerta.show();
+            }
+        });
     }
-    //Clase que se encarga de sacar el JSON de la URL
+    class EnviarMail extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(String... arg0) {
+            HttpHandler handler = new HttpHandler();
+
+            //IP CLASE
+            //String url2 = "http://192.168.20.154/api/v1/enviarMail/"+arg0[0]+"/"+arg0[1];
+
+            //IP CASA
+            //String url2 = "http://192.168.1.109/api/v1/enviarMail/"+arg0[0]+"/"+arg0[1];
+
+            //IP TRABAJO
+            String url2 = "http://10.245.97.173/api/v1/enviarMail/"+arg0[0]+"/"+arg0[1];
+
+            //HOSTING
+            //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/enviarMail/"+arg0[0]+"/"+arg0[1];
+
+            handler.makeServiceCall(url2);
+
+            return null;
+        }
+    }
+
+    class RecuperarContrasena extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(String... arg0) {
+            HttpHandler handler = new HttpHandler();
+
+            if(arg0[0].equals(""))
+            {
+                arg0[0] = "q";
+            }
+            if(arg0[1].equals(""))
+            {
+                arg0[1] = "q";
+            }
+
+            //IP CLASE
+            //String url2 = "http://192.168.20.154/api/v1/recuperarContrasena/"+arg0[0]+"/"+arg0[1];
+
+            //IP CASA
+            //String url2 = "http://192.168.1.109/api/v1/recuperarContrasena/"+arg0[0]+"/"+arg0[1];
+
+            //IP TRABAJO
+            String url2 = "http://10.245.97.173/api/v1/recuperarContrasena/"+arg0[0]+"/"+arg0[1];
+
+            //HOSTING
+            //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/recuperarContrasena/"+arg0[0]+"/"+arg0[1];
+
+            String pass = handler.makeServiceCall(url2);
+            if(pass != null)
+            {
+                if(!pass.trim().equals("-1"))
+                {
+                    passBD = pass.trim();
+                    coinciden = true;
+                }
+                else{coinciden = false;}
+            }
+            else{
+                System.out.println("NO SE HA PODIDO ESTABLECER CONEXION CON LA URL");
+            }
+            return null;
+        }
+    }
+
     class GetUsuarios extends AsyncTask<Void, Void, Void> {
 
         String token;
@@ -97,7 +252,7 @@ public class Login extends AppCompatActivity {
             //String url2 = "http://192.168.1.109/api/v1/login/"+usuario+"/"+contraseña;
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/login/"+usuario+"/"+contraseña;
+            String url2 = "http://10.245.97.173/api/v1/login/"+usuario+"/"+contraseña;
 
             //HOSTING
             //ring url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/login/"+usuario+"/"+contraseña;
@@ -134,7 +289,6 @@ public class Login extends AppCompatActivity {
                 contraseña="";
 
             }
-
         }
     }
 }
