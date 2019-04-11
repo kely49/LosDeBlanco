@@ -1,12 +1,12 @@
 package com.example.hp.proyectoldb;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.Toolbar;;
@@ -85,7 +86,6 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
 
         //Recuperamos la foto que se haya guardado en preferencias
 
-        //TODO: IF( !String baseDatos = ImagenRecuperada . equals(""))
         try {
             new GetIdUsu().execute().get();
         } catch (ExecutionException e) {
@@ -103,13 +103,10 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
 
         if(!fotoString.equals(""))
         {
-            //TODO: Cargar la imagen de la tabla usuarios y meterla en la variable "base"
-
             String base = fotoString;
             byte[] imageAsBytes = Base64.decode(base.getBytes(),Base64.DEFAULT);
             imagenPerfil.setImageBitmap(BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length));
         }
-
 
         //Al hacer click sobre la imagen, nos da opcion de cambiarla
         imagenPerfil.setOnClickListener(new View.OnClickListener() {
@@ -129,8 +126,6 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             }
         });
 
-
-
         //Recogemos todos los eventos de la base de datos
         try {
             new GetEventos().execute().get();
@@ -139,7 +134,6 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
 
         final ArrayAdapter<String> adaptador = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,datos);
         listaEdiciones.setAdapter(adaptador);
@@ -186,58 +180,72 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
 
             listaEdiciones.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-                public boolean onItemLongClick(AdapterView<?> parent, View v,
-                                               int index, long arg3) {
+                public boolean onItemLongClick(final AdapterView<?> parent, View v,
+                                               final int index, long arg3) {
 
-                    nombreSZ = "";
-                    String ediocionYFecha = parent.getItemAtPosition(index).toString();
-                    char[] caracteres = ediocionYFecha.toCharArray();
+                    AlertDialog.Builder builderAlerta = new AlertDialog.Builder(ctx);
+                    builderAlerta.setCancelable(true);
+                    builderAlerta.setTitle("Eliminar Edicion");
+                    builderAlerta.setMessage("¿Estas seguro de eliminar la edicion?");
+                    builderAlerta.setPositiveButton("Aceptar",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                    //Como nos devuelve el texto con el siguiente formato 'nombre: fecha'
-                    //lo formateamos, quedandonos solo con el nombre
-                    for (int i = 0; i < caracteres.length; i++) {
-                        if(caracteres[i] == ':')
-                        {
-                            break;
+                                    nombreSZ = "";
+                                    String ediocionYFecha = parent.getItemAtPosition(index).toString();
+                                    char[] caracteres = ediocionYFecha.toCharArray();
+
+                                    //Como nos devuelve el texto con el siguiente formato 'nombre: fecha'
+                                    //lo formateamos, quedandonos solo con el nombre
+                                    for (int i = 0; i < caracteres.length; i++) {
+                                        if(caracteres[i] == ':')
+                                        {
+                                            break;
+                                        }
+                                        else{
+                                            nombreSZ += caracteres[i];
+                                        }
+                                    }
+                                    //Cogemos el idEvento del evento que pinchemos
+                                    try {
+                                        new GetIdEvento().execute(nombreSZ).get();
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    //Eliminamos de la tabla participacion la/s fila/s con dicho idEvento
+                                    //Eliminamos de la tabla evento la/s fila/s con el idEvento obtenido
+                                    //Eliminamos de la tabla miembros la/s fila/s con el idEvento obtenido
+                                    try {
+                                        new EliminarParticipacion().execute(idEvento).get();
+                                        new EliminarEvento().execute(idEvento).get();
+                                        new EliminarEventoMiembro().execute(idEvento).get();
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    Toast.makeText(ctx, "Eliminada "+nombreSZ, Toast.LENGTH_SHORT).show();
+
+                                    //eliminamos el item seleccionado y notificamos al adaptador
+                                    datos.remove(index);
+                                    adaptador.notifyDataSetChanged();
+
+
+                                }
+                            });
+                    builderAlerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
                         }
-                        else{
-                            nombreSZ += caracteres[i];
-                        }
-                    }
-                    //Cogemos el idEvento del evento que pinchemos
-                    try {
-                        new GetIdEvento().execute(nombreSZ).get();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    });
 
-
-                    //Eliminamos de la tabla participacion la/s fila/s con dicho idEvento
-                    try {
-                        new EliminarParticipacion().execute(idEvento).get();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    //Eliminamos de la tabla evento la/s fila/s con el idEvento obtenido
-                    try {
-                        new EliminarEvento().execute(idEvento).get();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    Toast.makeText(ctx, "Eliminada "+nombreSZ, Toast.LENGTH_SHORT).show();
-
-                    //eliminamos el item seleccionado y notificamos al adaptador
-                    datos.remove(index);
-                    adaptador.notifyDataSetChanged();
+                    AlertDialog dialogAlerta = builderAlerta.create();
+                    dialogAlerta.show();
 
                     return true;
                 }
@@ -296,7 +304,6 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             /*SharedPreferences.Editor editor = prefs.edit();
             editor.putString("imagen", imagen_str);
             editor.commit();*/
-
         }
     }
 
@@ -347,7 +354,10 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             intent.putExtra("nick",nick);
             startActivity(intent);
         }else if (id == R.id.nav_manage) {
-            Toast.makeText(ctx, "Funciona!!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, Contacto.class);
+            intent.putExtra("token",token);
+            intent.putExtra("nick",nick);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -372,7 +382,7 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             //String url2 = "http://192.168.1.109/api/v1/idUsuario/"+nick;
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/idUsuario/"+nick;
+            String url2 = "http://10.245.97.173/api/v1/idUsuario/"+nick;
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/idUsuario/"+nick;
@@ -411,7 +421,7 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             //String url2 = "http://192.168.1.109/api/v1/actualizarImagenPerfil/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/actualizarImagenPerfil/"+arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/actualizarImagenPerfil/"+arg0[0];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/actualizarImagenPerfil/"+arg0[0];
@@ -448,7 +458,7 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             //String url2 = "http://192.168.1.109//api/v1/idEvento/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/idEvento/"+arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/idEvento/"+arg0[0];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/idEvento/"+arg0[0];
@@ -487,7 +497,7 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             //String url2 = "http://192.168.1.109//api/v1/eliminarEvento/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/eliminarEvento/"+arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/eliminarEvento/"+arg0[0];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/eliminarEvento/"+arg0[0];
@@ -517,10 +527,40 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             //String url2 = "http://192.168.1.109//api/v1/eliminarParticipacion/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/eliminarParticipacion/"+arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/eliminarParticipacion/"+arg0[0];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/eliminarParticipacion/"+arg0[0];
+
+            System.out.println("SE VA A ELIMINAR");
+            handler.eliminarDato(url2);
+
+            return null;
+        }
+
+    }
+    class EliminarEventoMiembro extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Integer... arg0) {
+            HttpHandler handler = new HttpHandler();
+
+            //IP CLASE
+            //String url2 = "http://192.168.20.154/api/v1/eliminarEventoMiembro"+arg0[0];
+
+            //IP CASA
+            //String url2 = "http://192.168.1.109//api/v1/eliminarEventoMiembro"+arg0[0];
+
+            //IP TRABAJO
+            String url2 = "http://10.245.97.173/api/v1/eliminarEventoMiembro"+arg0[0];
+
+            //HOSTING
+            //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/eliminarEventoMiembro"+arg0[0];;
 
             System.out.println("SE VA A ELIMINAR");
             handler.eliminarDato(url2);
@@ -552,7 +592,7 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             //String url2 = "http://192.168.1.109/api/v1/eventos";
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/eventos";
+            String url2 = "http://10.245.97.173/api/v1/eventos";
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/eventos";
@@ -611,7 +651,7 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
             //String url2 = "http://192.168.1.109/api/v1/imagenPerfil/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/imagenPerfil/"+arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/imagenPerfil/"+arg0[0];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/imagenPerfil/"+arg0[0];
@@ -629,7 +669,6 @@ public class Agenda extends AppCompatActivity implements NavigationView.OnNaviga
                         String imagenPerfil = picture.getString("imagenPerfil");
 
                         fotoString = imagenPerfil;
-
                     }
 
                 } catch (JSONException e) {
