@@ -67,6 +67,56 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#f9d7db" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="33dp"
+                android:inputType="text"
+                android:textSize="17dp"
+                android:text="Equipo: "
+                android:textColor="#fff" />
+
+            <TextView
+                android:id="@+id/txtEquipoParticipado"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:maxLines="1"
+                android:text="Sin datos"
+                android:textSize="17dp"
+                android:textColor="#fff" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="33dp"
+                android:inputType="text"
+                android:textSize="17dp"
+                android:text="¿Has sobrevivido?: "
+                android:textColor="#fff" />
+
+            <TextView
+                android:id="@+id/txtHasSobrevivido"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:maxLines="1"
+                android:text="Sin datos"
+                android:textSize="17dp"
+                android:textColor="#fff" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,16 +130,16 @@
                 android:layout_marginLeft="33dp"
                 android:inputType="number"
                 android:textSize="17dp"
-                android:text="Numero de compañeros:"
+                android:text="Nº compañeros de equipo:"
                 android:textColor="#fff" />
 
             <TextView
                 android:id="@+id/txtCompaneros"
-                android:layout_width="42dp"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:maxLines="1"
-                android:text="null"
+                android:text="Sin datos"
                 android:textSize="17dp"
                 android:textColor="#fff" />
         </LinearLayout>
@@ -105,16 +155,16 @@
                 android:layout_marginLeft="33dp"
                 android:inputType="number"
                 android:textSize="17dp"
-                android:text="Numero de compañeros infectados:"
+                android:text="Nº compañeros de equipo infectados:"
                 android:textColor="#fff" />
 
             <TextView
                 android:id="@+id/txtInfectados"
-                android:layout_width="42dp"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:maxLines="1"
-                android:text="null"
+                android:text="Sin datos"
                 android:textSize="17dp"
                 android:textColor="#fff" />
         </LinearLayout>
@@ -129,18 +179,44 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="33dp"
-                android:inputType="number"
+                android:inputType="text"
                 android:textSize="17dp"
                 android:text="Porcentaje de infeccion en el grupo:"
                 android:textColor="#fff" />
 
             <TextView
                 android:id="@+id/txtPorcentaje"
-                android:layout_width="42dp"
+                android:layout_width="90dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:maxLines="1"
-                android:text="null"
+                android:text="Sin datos"
+                android:textSize="17dp"
+                android:textColor="#fff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="33dp"
+                android:inputType="text"
+                android:textSize="17dp"
+                android:text="Numero de pruebas realizadas:"
+                android:textColor="#fff" />
+
+            <TextView
+                android:id="@+id/txtPruebasRealizadas"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:maxLines="1"
+                android:text="Sin datos"
                 android:textSize="17dp"
                 android:textColor="#fff" />
         </LinearLayout>
