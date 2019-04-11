@@ -1,9 +1,11 @@
 package com.example.hp.proyectoldb;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -82,48 +84,69 @@ public class TusEventos extends AppCompatActivity {
 
         listaTusEventos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
-            public boolean onItemLongClick(AdapterView<?> parent, View v,
-                                           int index, long arg3) {
+            public boolean onItemLongClick(final AdapterView<?> parent, View v,
+                                           final int index, long arg3) {
 
+                AlertDialog.Builder builderAlerta = new AlertDialog.Builder(ctx);
+                builderAlerta.setCancelable(true);
+                builderAlerta.setTitle("Eliminar participacion");
+                builderAlerta.setMessage("¿Estas seguro de dejar de participar en este evento?");
+                builderAlerta.setPositiveButton("Aceptar",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                String nombreSZ = "";
-                String ediocionYFecha = parent.getItemAtPosition(index).toString();
-                char[] caracteres = ediocionYFecha.toCharArray();
+                                String nombreSZ = "";
+                                String ediocionYFecha = parent.getItemAtPosition(index).toString();
+                                char[] caracteres = ediocionYFecha.toCharArray();
 
-                //Como nos devuelve el texto con el siguiente formato 'nombre: fecha'
-                //lo formateamos, quedandonos solo con el nombre
-                for (int i = 0; i < caracteres.length; i++) {
-                    if(caracteres[i] == ':')
-                    {
-                        break;
+                                //Como nos devuelve el texto con el siguiente formato 'nombre: fecha'
+                                //lo formateamos, quedandonos solo con el nombre
+                                for (int i = 0; i < caracteres.length; i++) {
+                                    if(caracteres[i] == ':')
+                                    {
+                                        break;
+                                    }
+                                    else{
+                                        nombreSZ += caracteres[i];
+                                    }
+                                }
+
+                                //Cogemos el idEvento del evento que pinchemos
+                                try {
+                                    new GetIdEvento().execute(nombreSZ).get();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    System.out.println("IdEvento: "+idEvento+" idUsu: "+idUsu);
+                                    new EliminarParticipacionUsuario().execute(idEvento,idUsu).get();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                Toast.makeText(ctx, "Eliminada participacion en "+nombreSZ, Toast.LENGTH_SHORT).show();
+
+                                //eliminamos el item seleccionado y notificamos al adaptador
+                                datos.remove(index);
+                                adaptador.notifyDataSetChanged();
+
+                            }
+                        });
+                builderAlerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
                     }
-                    else{
-                        nombreSZ += caracteres[i];
-                    }
-                }
+                });
 
-                //Cogemos el idEvento del evento que pinchemos
-                try {
-                    new GetIdEvento().execute(nombreSZ).get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                AlertDialog dialogAlerta = builderAlerta.create();
+                dialogAlerta.show();
 
-                try {
-                    System.out.println("IdEvento: "+idEvento+" idUsu: "+idUsu);
-                    new EliminarParticipacionUsuario().execute(idEvento,idUsu).get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(ctx, "Eliminada participacion en "+nombreSZ, Toast.LENGTH_SHORT).show();
 
-                //eliminamos el item seleccionado y notificamos al adaptador
-                datos.remove(index);
-                adaptador.notifyDataSetChanged();
                 return true;
                 }
 
@@ -215,7 +238,7 @@ public class TusEventos extends AppCompatActivity {
             //String url2 = "http://192.168.1.109//api/v1/idEvento/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/idEvento/"+arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/idEvento/"+arg0[0];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/idEvento/"+arg0[0];
@@ -255,7 +278,7 @@ public class TusEventos extends AppCompatActivity {
             //String url2 = "http://192.168.1.109/api/v1/idUsuario/"+nick;
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/idUsuario/"+nick;
+            String url2 = "http://10.245.97.173/api/v1/idUsuario/"+nick;
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/idUsuario/"+nick;
@@ -296,7 +319,7 @@ public class TusEventos extends AppCompatActivity {
             //String url2 = "http://192.168.1.109/api/v1/participacion/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/participacion/"+arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/participacion/"+arg0[0];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/participacion/"+arg0[0];
@@ -342,16 +365,16 @@ public class TusEventos extends AppCompatActivity {
             HttpHandler handler = new HttpHandler();
 
             //IP CLASE
-            //String url2 = "http://192.168.20.154/api/v1/eventoConID/"+arg0[0];
+            //String url2 = "http://192.168.20.154/api/v1/eventoConIDOrdenado/"+arg0[0];
 
             //IP CASA
-            //String url2 = "http://192.168.1.109/api/v1/eventoConID/"+arg0[0];
+            //String url2 = "http://192.168.1.109/api/v1/eventoConIDOrdenado/"+arg0[0];
 
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/eventoConID/" + arg0[0];
+            String url2 = "http://10.245.97.173/api/v1/eventoConIDOrdenado/" + arg0[0];
 
             //HOSTING
-            //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/eventoConID/"+arg0[0];
+            //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/eventoConIDOrdenado/"+arg0[0];
 
             System.out.println("ARG0___: "+arg0[0]);
             String eventos = handler.makeServiceCall(url2);
@@ -404,9 +427,9 @@ public class TusEventos extends AppCompatActivity {
 
             //IP CASA
             //String url2 = "http://192.168.1.109//api/v1/eliminarParticipacionUsuario/"+arg0[0]+"/"+arg0[1];
-            System.out.println(arg0[0]+" "+arg0[1]);
+
             //IP TRABAJO
-            String url2 = "http://16.19.142.155/api/v1/eliminarParticipacionUsuario/"+arg0[0]+"/"+arg0[1];
+            String url2 = "http://10.245.97.173/api/v1/eliminarParticipacionUsuario/"+arg0[0]+"/"+arg0[1];
 
             //HOSTING
             //String url2 = "http://losdeblanco.000webhostapp.com/ldbapi/public/api/v1/eliminarParticipacionUsuario/"+arg0[0]+"/"+arg0[1];
