@@ -20,6 +20,7 @@
                 android:textSize="18dp"
                 android:textColor="#fff"/>
             <EditText
+                android:id="@+id/editEquipo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
@@ -31,27 +32,36 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
                 android:layout_marginTop="30dp"
-                android:layout_marginLeft="60dp"
+                android:layout_marginLeft="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Evento:"
+                android:layout_marginBottom="20dp"
+                android:text="Contraseña acceso:"
+                android:hint="prueba"
                 android:textSize="18dp"
                 android:textColor="#fff"/>
-
-            <Spinner
-                android:id="@+id/spinnerCreacionEquipos"
-                android:layout_width="232dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="35dp"
-                android:background="#fff">
-
-            </Spinner>
+            <EditText
+                android:id="@+id/editContraEquipo"
+                android:layout_marginTop="30dp"
+                android:maxLines="1"
+                android:textSize="18dp"
+                android:inputType="text"
+                android:textColor="#fff"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
+        <Button
+            android:id="@+id/botonEquipoCreado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_gravity="center"
+            android:text="Crear Equipo"/>
 
     </LinearLayout>
 
