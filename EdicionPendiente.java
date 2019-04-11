@@ -19,7 +19,5 @@ public class EdicionPendiente extends AppCompatActivity {
 
         txtPendiente.setText(nombre);
         txtFechaPendiente.setText(fecha);
-
-
     }
 }
